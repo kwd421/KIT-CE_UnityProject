@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
-        
+        Debug.Log("GitHubTest");
     }
 
     // Update is called once per frame
