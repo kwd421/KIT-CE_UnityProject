@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public float moveSpeed;
+    public float jumpPower;
+
     Rigidbody2D rigid;
     SpriteRenderer sprite;
     Animator anim;
@@ -15,10 +18,6 @@ public class PlayerMove : MonoBehaviour
     bool isJumping = false;
     bool isStop = false;
 
-    public float moveSpeed;
-    public float jumpPower;
-
-    public GameManager gameManager;
 
     // 무적 시간
     WaitForSeconds invinTime = new WaitForSeconds(3);
@@ -123,11 +122,10 @@ public class PlayerMove : MonoBehaviour
             sprite.flipX = moveInput < 0;
     }
     */
-
-
     void Jump()
     {
         // 공중에서도 기존 속도 유지 위해 velocity.x 사용
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
         rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
         isJumping = false;
     }
@@ -164,30 +162,33 @@ public class PlayerMove : MonoBehaviour
         // collision.tag 와 collision.gameObject.tag는 동일하다
         if (collision.gameObject.tag == "Item")
         {
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Item);
             // Point
             string coinType = collision.name;
             if (coinType.Contains("Bronze"))
-                gameManager.stagePoint += 50;
+                GameManager.instance.stagePoint += 50;
             else if (coinType.Contains("Silver"))
-                gameManager.stagePoint += 100;
+                GameManager.instance.stagePoint += 100;
             else if (coinType.Contains("Gold"))
-                gameManager.stagePoint += 200;
+                GameManager.instance.stagePoint += 200;
 
             // Deactive Item
             collision.gameObject.SetActive(false);
         }
         else if (collision.gameObject.tag == "Finish")
         {
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Finish);
             // Next Stage
-            gameManager.NextStage();
+            GameManager.instance.NextStage();
         }
     }
 
 
     void OnAttack(Transform enemy)
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Attack);
         // Point
-        gameManager.stagePoint += 100;
+        GameManager.instance.stagePoint += 100;
 
         // Player Jump Force
         rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
@@ -199,8 +200,9 @@ public class PlayerMove : MonoBehaviour
 
     void OnDamaged(Vector2 targetPos)
     {
+
         // Health Down
-        gameManager.HealthDown();
+        GameManager.instance.HealthDown();
 
         // Invincible Layer
         gameObject.layer = 11;
@@ -234,6 +236,7 @@ public class PlayerMove : MonoBehaviour
 
     public void Dead()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Die);
         // Sprite Alpha
         sprite.color = new Color(1, 1, 1, 0.4f);
 
@@ -244,7 +247,8 @@ public class PlayerMove : MonoBehaviour
         coll.enabled = false;
 
         // Die Effect Jump
-        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        VelocityZero();
+        rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
     }
 
     public void VelocityZero()

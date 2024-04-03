@@ -11,6 +11,7 @@ public class EnemyMove : MonoBehaviour
 
     int nextMove;
     public int speed;
+    bool isDamaged = false;
 
     WaitForSeconds deactiveTime = new WaitForSeconds(5);
 
@@ -30,6 +31,8 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDamaged)
+            return;
         // Move
         rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
 
@@ -71,6 +74,12 @@ public class EnemyMove : MonoBehaviour
 
     public void OnDamaged()
     {
+        // isDamaged to true
+        isDamaged = true;
+
+        // Velocity Zero
+        rigid.velocity = Vector3.zero;
+
         // Sprite Alpha
         sprite.color = new Color(1, 1, 1, 0.4f);
 
