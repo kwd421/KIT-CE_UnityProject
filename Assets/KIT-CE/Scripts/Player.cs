@@ -187,9 +187,9 @@ public class Player : MonoBehaviour
         // Reaction Force
         // TimeMap Collider 2D는 여러개를 놔둬도 전체를 단일 콜라이더로 취급하기 때문에 왼쪽, 오른쪽 Spike가
         // 나눠져있다고 할 때 오른쪽에서 왼쪽의 Spike에 충돌할 시 TileMap Position기준 왼쪽에 위치하여 왼쪽으로 튕기게 된다.
-        // 따라서 dir을 나누어 왼쪽, 오른쪽으로 튕기게 한 것은 의미가 없다.
-        int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dir, 1) * 7, ForceMode2D.Impulse);
+        // 따라서 dir은 현재 속도 기준으로 변경
+        int dir = rigid.velocity.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dir, 1.6f) * 10, ForceMode2D.Impulse);
 
         // Animation
         anim.SetTrigger("isDamaged");

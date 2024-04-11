@@ -44,7 +44,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(stagePoint + "," + totalPoint);
         UI_point.text = (totalPoint + stagePoint).ToString();
         gameTime += Time.deltaTime;
         min = Mathf.FloorToInt((stageTime - gameTime) / 60);
