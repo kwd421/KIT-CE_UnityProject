@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(stagePoint + "," + totalPoint);
         UI_point.text = (totalPoint + stagePoint).ToString();
         gameTime += Time.deltaTime;
         min = Mathf.FloorToInt((stageTime - gameTime) / 60);
@@ -130,7 +131,7 @@ public class GameManager : MonoBehaviour
 
     void PlayerReposition()
     {
-        player.transform.position = new Vector3(-6, -1, 0);
+        player.transform.position = new Vector3(0, 0, 0);
         player.VelocityZero();
     }
 
@@ -140,4 +141,5 @@ public class GameManager : MonoBehaviour
         isTimeOver = false;
         SceneManager.LoadScene(0);
     }
+
 }

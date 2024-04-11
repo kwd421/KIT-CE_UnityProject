@@ -158,34 +158,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // OnTrigger는 실제적 충돌이 없을 때 사용(isTrigger On)
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // collision.tag 와 collision.gameObject.tag는 동일하다
-        if (collision.gameObject.tag == "Item")
-        {
-            AudioManager.instance.PlaySfx(AudioManager.Sfx.Item);
-            // Point
-            string coinType = collision.name;
-            if (coinType.Contains("Bronze"))
-                GameManager.instance.stagePoint += 50;
-            else if (coinType.Contains("Silver"))
-                GameManager.instance.stagePoint += 100;
-            else if (coinType.Contains("Gold"))
-                GameManager.instance.stagePoint += 200;
-
-            // Deactive Item
-            collision.gameObject.SetActive(false);
-        }
-        else if (collision.gameObject.tag == "Finish")
-        {
-            AudioManager.instance.PlaySfx(AudioManager.Sfx.Finish);
-            // Next Stage
-            GameManager.instance.NextStage();
-        }
-    }
-
-
     void OnAttack(Transform enemy)
     {
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Attack);

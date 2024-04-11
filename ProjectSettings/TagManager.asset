@@ -8,6 +8,7 @@ TagManager:
   - Item
   - Spike
   - Crevasse
+  - Coin
   layers:
   - Default
   - TransparentFX
