@@ -6,6 +6,13 @@ using static UnityEditor.Progress;
 
 public class Item : MonoBehaviour
 {
+    Animator anim;
+
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
+
     // OnTrigger는 실제적 충돌이 없을 때 사용(isTrigger On)
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,7 +26,11 @@ public class Item : MonoBehaviour
                     break;
 
                 case ("Item"):
-                    Items(transform);
+                    Items(collision.transform);
+                    break;
+
+                case ("Trap"):
+                    Traps(collision.transform);
                     break;
 
                 case ("Finish"):
@@ -48,7 +59,7 @@ public class Item : MonoBehaviour
         transform.gameObject.SetActive(false);
     }
 
-    public void Items(Transform item)
+    public void Items(Transform player)
     {
         // Sound
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Item);
@@ -57,5 +68,21 @@ public class Item : MonoBehaviour
 
         // Deactive Item
         transform.gameObject.SetActive(false);
+    }
+
+    public void Traps(Transform player)
+    {
+        if (transform.name.Contains("JumpPad") && player.GetComponent<Rigidbody2D>().velocity.y < 0)
+        {
+            JumpPad();
+        }
+    }
+
+    public void JumpPad()
+    {
+        GameManager.instance.player.isJumping = true;
+        anim.SetTrigger("doJump");
+        GameManager.instance.player.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 40, ForceMode2D.Impulse);
+        GameManager.instance.player.isJumping = false;
     }
 }

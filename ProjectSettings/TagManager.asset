@@ -9,6 +9,7 @@ TagManager:
   - Spike
   - Crevasse
   - Coin
+  - Trap
   layers:
   - Default
   - TransparentFX

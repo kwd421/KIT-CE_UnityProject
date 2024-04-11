@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     // 수평 이동
     float moveInput;
 
-    bool isJumping = false;
+    public bool isJumping = false;
     bool isStop = false;
 
 
