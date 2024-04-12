@@ -172,7 +172,7 @@ public class Player : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Spike")
         {
-            StartCoroutine(InvincibleCoroutine(collision.transform.position));
+            StartCoroutine(InvincibleCoroutine(new Vector2(-1000, -1000)));
         }
     }
 
@@ -205,8 +205,8 @@ public class Player : MonoBehaviour
         // Reaction Force
         // TimeMap Collider 2D는 여러개를 놔둬도 전체를 단일 콜라이더로 취급하기 때문에 왼쪽, 오른쪽 Spike가
         // 나눠져있다고 할 때 오른쪽에서 왼쪽의 Spike에 충돌할 시 TileMap Position기준 왼쪽에 위치하여 왼쪽으로 튕기게 된다.
-        // 따라서 dir은 현재 속도 기준으로 변경
-        // 일단 x축으로 튕기는 기능은 제거
+        // 따라서 dir은 Spike와 충돌 시 현재 player 속도 기준, Enemy와 충돌 시 position 기준으로 변경
+        // AddForce 사용 시 슈퍼점프 되어 velocity로 변경
         /*
                 if(rigid.velocity.y > 0 && !grounded)
                 {
@@ -215,7 +215,16 @@ public class Player : MonoBehaviour
                 else
                     rigid.AddForce(new Vector2(dir * 2, 1) * 20, ForceMode2D.Impulse);
         */
-        rigid.velocity = new Vector2(0, 20);
+        if(targetPos ==  new Vector2(-1000, -1000)) 
+        {
+            rigid.velocity = new Vector2(dir * 1.5f, 1) * 20;
+        }
+        else
+        {
+            int dirE = transform.position.x - targetPos.x > 0 ? 1 : -1;
+            rigid.velocity = new Vector2(dirE * 1.5f, 1) * 20;
+        }
+        
 
         // Animation
         anim.SetTrigger("isDamaged");
