@@ -7991,6 +7991,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 22100000, guid: 87203e9200fe8094ba8446f08eda08c8, type: 2}
+    - target: {fileID: 8519843186150167419, guid: 1cd5ab868471e9d4ab17978528cd90d7, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8687725725961782297, guid: 1cd5ab868471e9d4ab17978528cd90d7, type: 3}
       propertyPath: m_Sprite
       value: 
