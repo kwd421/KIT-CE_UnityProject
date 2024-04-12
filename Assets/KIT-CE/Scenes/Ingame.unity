@@ -7444,7 +7444,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -7063083109366112450, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
       propertyPath: m_Offset.y
-      value: -0.4
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
       propertyPath: m_LocalPosition.x

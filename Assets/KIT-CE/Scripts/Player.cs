@@ -10,18 +10,22 @@ public class Player : MonoBehaviour
 
     Rigidbody2D rigid;
     SpriteRenderer sprite;
-    Animator anim;
+    public Animator anim;
     CapsuleCollider2D coll;
 
     // 수평 이동
     float moveInput;
 
     public bool isJumping = false;
+    bool grounded = true;   // 공중, 지상 판별 변수
     bool isStop = false;
-
+    bool isHit = false; // 피격 시 noJumpTime초만큼 점프 불가케 하기 위한 변수
+    int dir;
 
     // 무적 시간
-    WaitForSeconds invinTime = new WaitForSeconds(3);
+    WaitForSeconds invinTime = new WaitForSeconds(2);
+    // 피격시 점프 불가 시간
+    WaitForSeconds noJumpTime = new WaitForSeconds(0.5f);
 
     void Awake()
     {
@@ -35,11 +39,10 @@ public class Player : MonoBehaviour
     {
         // 키입력은 Update에, 실제 이동은 FixedUpdate에서
 
-        // Jump
-        if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumping"))
+        // Jump키 눌렀을 때 + 지상 + 피격 상태 아닐 때
+        if (Input.GetButtonDown("Jump") && grounded && !isHit)
         {
             isJumping = true;
-            anim.SetBool("isJumping", true);
         }
 
         // Move Speed
@@ -65,7 +68,7 @@ public class Player : MonoBehaviour
     {
         // velocity: 물리엔진을 사용하여 (Rigidbody와)충돌 시 상호작용 O
         // Friction(마찰력)에 영향받지 않으므로 Friction 사용하려면 AddForce 사용할것
-        // rigid.velocity = new Vector2(moveSpeed * moveInput, rigid.velocity.y);
+        //rigid.velocity = new Vector2(moveSpeed * moveInput, rigid.velocity.y);
 
 
         // Translate: 물리엔진 미사용, 충돌 시 상호작용 X, 보통 Rigidbody와 함께 사용 X
@@ -92,28 +95,42 @@ public class Player : MonoBehaviour
         if (isJumping)
             Jump();
 
+        Debug.DrawRay(transform.position + new Vector3(0.2f, 0, 0), Vector3.down * 0.3f, new Color(0, 1, 0));
+        Debug.DrawRay(transform.position + new Vector3(-0.2f, 0, 0), Vector3.down * 0.3f, new Color(0, 1, 0));
 
-        // Landing Platform
+        // Ray가 중앙에 1개이면 경사로에서 제대로 인식 불가, 좌우 2개로 변경
+        RaycastHit2D rightRayHit = Physics2D.Raycast(transform.position + new Vector3(0.2f, 0, 0), Vector3.down, 0.3f, LayerMask.GetMask("Platform"));
+        RaycastHit2D leftRayHit = Physics2D.Raycast(transform.position + new Vector3(-0.2f, 0, 0), Vector3.down, 0.3f, LayerMask.GetMask("Platform"));
+
+        // 좌우 ray 모두 공중 인식 시
+        if (rightRayHit.collider == null && leftRayHit.collider == null)
+        {
+            grounded = false;   // 체공중, Jump 불가
+        }
+        else
+        {
+            // 이 조건이 없으면 플랫폼을 인식하는 순간 점프시 내려오는 힘과 점프힘이 + - 되어 낮은 점프 발생
+            // 0이 아닌 다른값일때도 발생(eg. distance < 0.05f)
+            if (rightRayHit.distance == 0 || leftRayHit.distance == 0)
+            {
+                grounded = true;    // 지상, Jump 가능
+            }
+        }
+
+        // 위의 grounded와는 별개로, 점프 시작시 collider != null과 distance == 0 조건을 만족하기 때문에
+        // 떨어질 때 조건을 별개로 만들어 점프 애니메이션 재생/미재생 구분
         if (rigid.velocity.y <= 0)
         {
-            Debug.DrawRay(transform.position + new Vector3(0.2f, 0, 0), Vector3.down, new Color(0, 1, 0));
-            Debug.DrawRay(transform.position + new Vector3(-0.2f, 0, 0), Vector3.down, new Color(0, 1, 0));
-
-            // Ray가 중앙에 1개이면 경사로에서 제대로 인식 불가함
-            RaycastHit2D rightRayHit = Physics2D.Raycast(transform.position + new Vector3(0.2f, 0, 0), Vector3.down, 1, LayerMask.GetMask("Platform"));
-            RaycastHit2D leftRayHit = Physics2D.Raycast(transform.position + new Vector3(-0.2f, 0, 0), Vector3.down, 1, LayerMask.GetMask("Platform"));
-
-
-            // ray가 Platform에 Hit한 distance가 0.5 미만일 시 점프 활성화 및 점프 애니메이션 해제
+            // ray가 Platform에 Hit한 distance가 0일 때 점프 애니메이션 해제(땅에 붙어있을 때)
             if (rightRayHit.collider != null || leftRayHit.collider != null)
             {
-                if (rightRayHit.distance < 0.5f || leftRayHit.distance < 0.5f)
+                if (rightRayHit.distance == 0 || leftRayHit.distance == 0)
                 {
                     anim.SetBool("isJumping", false);
                 }
-                    
             }
         }
+        dir = rigid.velocity.x > 0 ? -1 : 1;    // hit시 방향 결정
     }
 
     /*
@@ -125,6 +142,7 @@ public class Player : MonoBehaviour
     */
     void Jump()
     {
+        anim.SetBool("isJumping", true);
         // 공중에서도 기존 속도 유지 위해 velocity.x 사용
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
         rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
@@ -188,8 +206,16 @@ public class Player : MonoBehaviour
         // TimeMap Collider 2D는 여러개를 놔둬도 전체를 단일 콜라이더로 취급하기 때문에 왼쪽, 오른쪽 Spike가
         // 나눠져있다고 할 때 오른쪽에서 왼쪽의 Spike에 충돌할 시 TileMap Position기준 왼쪽에 위치하여 왼쪽으로 튕기게 된다.
         // 따라서 dir은 현재 속도 기준으로 변경
-        int dir = rigid.velocity.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dir, 1.6f) * 10, ForceMode2D.Impulse);
+        // 일단 x축으로 튕기는 기능은 제거
+        /*
+                if(rigid.velocity.y > 0 && !grounded)
+                {
+                    rigid.AddForce(new Vector2(dir * 2, 0) * 20, ForceMode2D.Impulse);
+                }
+                else
+                    rigid.AddForce(new Vector2(dir * 2, 1) * 20, ForceMode2D.Impulse);
+        */
+        rigid.velocity = new Vector2(0, 20);
 
         // Animation
         anim.SetTrigger("isDamaged");
@@ -204,6 +230,9 @@ public class Player : MonoBehaviour
     IEnumerator InvincibleCoroutine(Vector2 targetPos)
     {
         OnDamaged(targetPos);
+        isHit = true;   
+        yield return noJumpTime;
+        isHit = false;
         yield return invinTime;
         OffDamaged();
     }

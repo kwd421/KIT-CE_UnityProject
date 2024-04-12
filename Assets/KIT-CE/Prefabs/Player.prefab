@@ -151,6 +151,8 @@ MonoBehaviour:
   moveSpeed: 4.5
   jumpPower: 20
   enemy: {fileID: 0}
+  anim: {fileID: 0}
+  isJumping: 0
 --- !u!70 &8519843186150167419
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -184,5 +186,5 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.55}
-  m_Size: {x: 0.7, y: 1.1}
+  m_Size: {x: 0.7, y: 0.9}
   m_Direction: 0

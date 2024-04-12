@@ -80,9 +80,10 @@ public class Item : MonoBehaviour
 
     public void JumpPad()
     {
-        GameManager.instance.player.isJumping = true;
+        GameManager.instance.player.anim.SetBool("isJumping", true);
+        //GameManager.instance.player.isJumping = true;
         anim.SetTrigger("doJump");
         GameManager.instance.player.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 40, ForceMode2D.Impulse);
-        GameManager.instance.player.isJumping = false;
+        //GameManager.instance.player.isJumping = false;
     }
 }
