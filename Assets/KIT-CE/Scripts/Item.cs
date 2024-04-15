@@ -80,6 +80,7 @@ public class Item : MonoBehaviour
 
     public void JumpPad()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
         GameManager.instance.player.anim.SetBool("isJumping", true);
         //GameManager.instance.player.isJumping = true;
         anim.SetTrigger("doJump");
