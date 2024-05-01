@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     public float moveSpeed;
     public float jumpPower;
-    public Enemy enemy;
+    public WalkingEnemy enemy;
 
     Rigidbody2D rigid;
     SpriteRenderer sprite;
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 
         if (rigid.velocity.x > moveSpeed) // Right Max Speed
         {
-            rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y);
+            rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y );
         }
         else if (rigid.velocity.x < -moveSpeed) // Left Max Speed
         {
@@ -176,18 +176,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnAttack(Transform enemy)
+    void OnAttack(Transform _enemy)
     {
+        Enemy enemy = _enemy.GetComponent<Enemy>();
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Attack);
         // Point
-        GameManager.instance.stagePoint += 100;
+        GameManager.instance.stagePoint += enemy.score;
 
         // Player Jump Force
         rigid.AddForce(Vector2.up * 12, ForceMode2D.Impulse);
 
         // Enemy Die
-        Enemy enemyMove = enemy.GetComponent<Enemy>();
-        enemyMove.OnDamaged();
+        // Enemy에 의해 상속된 _enemy를 Get. Override된 OnDamaged()함수가 있다면 그것이 사용됨
+        enemy.OnDamaged();
     }
 
     void OnDamaged(Vector2 targetPos)
