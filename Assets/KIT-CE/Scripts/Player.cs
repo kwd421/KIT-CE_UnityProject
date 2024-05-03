@@ -247,6 +247,18 @@ public class Player : MonoBehaviour
         OffDamaged();
     }
 
+    public void Live()
+    {
+        // Sprite Alpha
+        sprite.color = new Color(1, 1, 1);
+
+        // Sprite Flip Y
+        sprite.flipY = false;
+
+        // Collider Disable
+        coll.enabled = true;
+    }
+
     public void Dead()
     {
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Die);

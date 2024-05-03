@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEditor.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IDataPersistence
 {
     // Changed: Singleton GameManager
     public static GameManager instance;
@@ -19,10 +20,10 @@ public class GameManager : MonoBehaviour
     public Player player;
     public GameObject[] stages;
 
-    public Image[] UI_health;
     public Text UI_point;
     public Text UI_stage;
     public Text UI_time;
+    public Text UI_health;
     public GameObject UI_restartBtn;
 
     Text btnText;
@@ -32,6 +33,10 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        if (instance != null)
+        {
+            Debug.LogError("이미 GameManager가 존재합니다.");
+        }
         instance = this;
         btnText = UI_restartBtn.GetComponentInChildren<Text>();
     }
@@ -58,8 +63,19 @@ public class GameManager : MonoBehaviour
             isTimeOver = true;
             UI_restartBtn.SetActive(true);
         }
+
+        UI_health.text = "X " + health;
     }
 
+    public void LoadData(GameData data)
+    {
+        this.health = data.health;
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.health = this.health;
+    }
 
     public void NextStage()
     {
@@ -94,13 +110,32 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void Reset()
+    {
+        UI_restartBtn.SetActive(false);
+
+        PlayerReposition();
+        totalPoint = 0;
+        stagePoint = 0;
+        stageIndex = 0;
+        health = 3;
+        stageTime = 180;
+        gameTime = 0;
+
+        // stages 전부 비활성화
+        System.Array.ForEach(stages, stage => stage.SetActive(false));
+        // 0스테이지 활성화
+        stages[0].SetActive(true);
+
+        player.Live();
+    }
+
     public void HealthDown()
     {
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Damaged);
         if (health > 0)
         {
             health--;
-            UI_health[health].color = new Color(1, 0, 0, 0.4f);
         }
         else
         {
@@ -138,7 +173,6 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         isTimeOver = false;
-        SceneManager.LoadScene(0);
+        Reset();
     }
-
 }

@@ -22,6 +22,10 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
+        if(instance != null)
+        {
+            Debug.LogError("이미 AudioManager가 존재합니다.");
+        }
         instance = this;
         Init();
     }
