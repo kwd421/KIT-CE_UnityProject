@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
+using UnityEditor.Search;
+using System.Linq;
+using static UnityEditor.Progress;
 
 public class GameManager : MonoBehaviour, IDataPersistence
 {
@@ -45,14 +48,15 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         // 추후 옵션으로 프레임 설정 가능하게
         Application.targetFrameRate = 60;
+        UI_health.text = "X " + health;
     }
 
     void Update()
     {
         UI_point.text = (totalPoint + stagePoint).ToString();
         gameTime += Time.deltaTime;
-        min = Mathf.FloorToInt((stageTime - gameTime) / 60);
-        sec = Mathf.CeilToInt((stageTime - gameTime) % 60);
+        min = (int)(stageTime - gameTime) / 60;
+        sec = (int)(stageTime - gameTime) % 60;
         if(min < 0) min = 0;
         if (sec < 0) sec = 0;
         UI_time.text = min.ToString("D2") + ":" + sec.ToString("00");
@@ -64,7 +68,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             UI_restartBtn.SetActive(true);
         }
 
-        UI_health.text = "X " + health;
+        
     }
 
     public void LoadData(GameData data)
@@ -84,7 +88,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             stages[stageIndex].SetActive(false);
             stageIndex++;
+
             stages[stageIndex].SetActive(true);
+            // 스테이지 하위 오브젝트들 전부 Active
+            StageInit();
+
             PlayerReposition();
 
             // Calculate Point
@@ -110,32 +118,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     }
 
-    public void Reset()
-    {
-        UI_restartBtn.SetActive(false);
-
-        PlayerReposition();
-        totalPoint = 0;
-        stagePoint = 0;
-        stageIndex = 0;
-        health = 3;
-        stageTime = 180;
-        gameTime = 0;
-
-        // stages 전부 비활성화
-        System.Array.ForEach(stages, stage => stage.SetActive(false));
-        // 0스테이지 활성화
-        stages[0].SetActive(true);
-
-        player.Live();
-    }
-
     public void HealthDown()
     {
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Damaged);
         if (health > 0)
         {
             health--;
+            UI_health.text = "X " + health;
         }
         else
         {
@@ -173,6 +162,44 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         Time.timeScale = 1;
         isTimeOver = false;
-        Reset();
+
+        UI_restartBtn.SetActive(false);
+
+        PlayerReposition();
+
+        totalPoint = 0;
+        stagePoint = 0;
+        stageIndex = 0;
+        health = 3;
+        stageTime = 180;
+        gameTime = 0;
+
+        UI_health.text = "X " + health;
+        UI_stage.text = "STAGE " + (stageIndex + 1);
+
+        // stages 전부 비활성화
+        System.Array.ForEach(stages, stage => stage.SetActive(false));
+        StageInit();
+
+        player.Init();
+    }
+
+    // 스테이지가 하나 넘어갈 때마다 넘어간 스테이지의 Item, Enemy 전체 활성화
+    void StageInit()
+    {
+        // 스테이지 활성화
+        stages[stageIndex].SetActive(true);
+        // 스테이지 하위 Item 활성화
+        Item[] items = stages[stageIndex].GetComponentsInChildren<Item>(true);
+        for (int i = 0; i < items.Length; i++)
+        {
+            items[i].gameObject.SetActive(true);
+        }
+        // 스테이지 하위 Enemy 활성화
+        Enemy[] enemies = stages[stageIndex].GetComponentsInChildren<Enemy>(true);
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].gameObject.SetActive(true);
+        }
     }
 }

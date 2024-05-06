@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     SpriteRenderer sprite;
     CircleCollider2D coll;
 
+    private Vector3 initPos;
+    private int initHP;
     public int score;
     public int HP;
     int nextMove;
@@ -23,6 +25,14 @@ public class Enemy : MonoBehaviour
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         coll = GetComponent<CircleCollider2D>();
+
+        initPos = transform.position;   // 초기위치 저장용 -> 게임 초기화 후 원위치
+        initHP = this.HP;
+    }
+
+    protected virtual void OnEnable()
+    {
+        Init();
     }
 
     protected virtual void Start()
@@ -59,7 +69,6 @@ public class Enemy : MonoBehaviour
         {
             sprite.flipX = rigid.velocity.x > 0;
         }
-
     }
 
     // Recursive
@@ -111,6 +120,31 @@ public class Enemy : MonoBehaviour
 
         // Object Deactivate
         StartCoroutine(Deactive());
+    }
+
+    // 사망 시 호출
+    public virtual void Init()
+    {
+        // HP 초기화
+        HP = initHP;
+
+        // isDead to false, Update 실행
+        isDead = false;
+
+        // 위치 초기화
+        transform.position = initPos;
+
+        // Velocity Zero, 속도 초기화
+        rigid.velocity = Vector3.zero;
+
+        // Sprite Alpha, 투명도 복구
+        sprite.color = new Color(1, 1, 1);
+
+        // Sprite Flip Y, 상하반전 복구
+        sprite.flipY = false;
+
+        // Collider Enable, 충돌 물리 복구
+        coll.enabled = true;
     }
 
     IEnumerator Deactive()

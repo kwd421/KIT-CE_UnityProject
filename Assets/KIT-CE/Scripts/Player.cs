@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     int dir;
 
     // 무적 시간
-    WaitForSeconds invinTime = new WaitForSeconds(2);
+    WaitForSeconds invinTime = new WaitForSeconds(1.5f);
     // 피격시 점프 불가 시간
     WaitForSeconds noJumpTime = new WaitForSeconds(0.5f);
 
@@ -247,7 +247,7 @@ public class Player : MonoBehaviour
         OffDamaged();
     }
 
-    public void Live()
+    public void Init()
     {
         // Sprite Alpha
         sprite.color = new Color(1, 1, 1);

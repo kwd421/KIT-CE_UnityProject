@@ -8,6 +8,8 @@ public class Item : MonoBehaviour
 {
     Animator anim;
 
+    public bool collected = false;
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -42,6 +44,12 @@ public class Item : MonoBehaviour
         }
     }
 
+    public void Init()
+    {
+        collected = false;
+        transform.gameObject.SetActive(true);
+    }
+
     public void Coins(Transform coin)
     {
         // Sound
@@ -56,6 +64,7 @@ public class Item : MonoBehaviour
             GameManager.instance.stagePoint += 200;
 
         // Deactive Item
+        collected = true;
         transform.gameObject.SetActive(false);
     }
 
