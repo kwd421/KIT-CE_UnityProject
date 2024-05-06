@@ -8,11 +8,14 @@ public class FileDataHandler
 {
     private string dataDirPath = "";
     private string dataFileName = "";
+    private bool useEncryption = false;
+    private readonly string encryptionCodeWord = "word";
 
-    public FileDataHandler(string dataDirPath, string dataFileName)
+    public FileDataHandler(string dataDirPath, string dataFileName, bool useEncryption)
     {
         this.dataDirPath = dataDirPath;
         this.dataFileName = dataFileName;
+        this.useEncryption = useEncryption;
     }
 
     public GameData Load()
@@ -32,6 +35,11 @@ public class FileDataHandler
                     {
                         dataToLoad = reader.ReadToEnd();
                     }
+                }
+
+                if(useEncryption)
+                {
+                    dataToLoad = EncryptDecrypt(dataToLoad);
                 }
 
                 // Json데이터를 C#에서 사용할 수 있게 직렬화 해제(deserialize)
@@ -57,6 +65,11 @@ public class FileDataHandler
             // C# 게임 데이터를 Json으로 직렬화(serializa)
             string dataToStore = JsonUtility.ToJson(data, true);
 
+            if(useEncryption)
+            {
+                dataToStore = EncryptDecrypt(dataToStore);
+            }
+
             // 직렬화된 데이터를 파일에 write
             // using문을 사용하면 사용후 자동으로 정리(Close) 및 해제(Dispose)되므로 메모리 낭비를 줄일 수 있다.
             // (파일을 닫아줄 필요가 없다!)
@@ -73,5 +86,16 @@ public class FileDataHandler
         {
             Debug.LogError("파일에 데이터를 저장하지 못했습니다." + fullPath + "\n" + e);
         }
+    }
+
+    // XOR을 이용한 암호화, 복호화
+    private string EncryptDecrypt(string data)
+    {
+        string modifiedData = "";
+        for(int i=0; i<data.Length; i++)
+        {
+            modifiedData += (char)(data[i] ^ encryptionCodeWord[i % encryptionCodeWord.Length]);
+        }
+        return modifiedData;
     }
 }

@@ -157,7 +157,7 @@ MonoBehaviour:
   stagePoint: 0
   stageIndex: 0
   health: 3
-  stageTime: 100
+  stageTime: 125
   gameTime: 0
   player: {fileID: 1664522745}
   stages:
@@ -8708,6 +8708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: data.game
+  useEncryption: 1
 --- !u!1 &1771698535
 GameObject:
   m_ObjectHideFlags: 0
