@@ -176,6 +176,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 공중 enemy 전용 함수, rigidbody의 body type이 kinematic인 object는 collision 함수가 동작하지 않음
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            // Damaged
+            StartCoroutine(InvincibleCoroutine(collision.transform.position));
+        }
+    }
+
     void OnAttack(Transform _enemy)
     {
         Enemy enemy = _enemy.GetComponent<Enemy>();
