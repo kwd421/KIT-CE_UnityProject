@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    Rigidbody2D rigid;
-    Animator anim;
-    SpriteRenderer sprite;
-    CircleCollider2D coll;
+    protected Rigidbody2D rigid;
+    protected Animator anim;
+    protected SpriteRenderer sprite;
+    protected CircleCollider2D coll;
 
     private Vector3 initPos;
     private int initHP;
     public int score;
     public int HP;
-    int nextMove;
+    protected int nextMove;
     public int speed;
-    bool isDead = false;
+    protected bool isDead = false;
 
     protected WaitForSeconds deactiveTime = new WaitForSeconds(3);  // 3초간 사망 관련 진행
 
@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
     }
 
     // Recursive
-    void Think()
+    protected virtual void Think()
     {
         // RandomRange(포함, 미포함)
         // Set Next Act
@@ -147,7 +147,7 @@ public class Enemy : MonoBehaviour
         coll.enabled = true;
     }
 
-    IEnumerator Deactive()
+    protected IEnumerator Deactive()
     {
         yield return deactiveTime;
         gameObject.SetActive(false);
