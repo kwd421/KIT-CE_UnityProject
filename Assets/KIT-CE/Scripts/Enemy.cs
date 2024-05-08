@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
     protected SpriteRenderer sprite;
     protected CircleCollider2D coll;
 
-    private Vector3 initPos;
+    protected Vector3 initPos;
     private int initHP;
     public int score;
     public int HP;
