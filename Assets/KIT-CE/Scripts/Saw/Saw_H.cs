@@ -24,6 +24,18 @@ public class Saw_H : Enemy
             movingRight = 1;
         }
     }
+    protected override void Awake()
+    {
+        rigid = GetComponent<Rigidbody2D>();
+
+        transform.position = new Vector3(transform.position.x, leftPoint.position.y, transform.position.z);
+        initPos = transform.position;
+    }
+    public override void Init()
+    {
+        // 위치 초기화
+        transform.position = initPos;
+    }
     protected override void Start()
     {
 

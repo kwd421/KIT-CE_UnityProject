@@ -25,6 +25,19 @@ public class Saw_V : Enemy
         }
         
     }
+    protected override void Awake()
+    {
+        rigid = GetComponent<Rigidbody2D>();
+
+        transform.position = new Vector3(topPoint.position.x, transform.position.y, transform.position.z);
+        initPos = transform.position;
+    }
+    public override void Init()
+    {
+        // 위치 초기화
+        transform.position = initPos;
+    }
+
     protected override void Start()
     {
 
