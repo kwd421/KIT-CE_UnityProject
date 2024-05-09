@@ -2,11 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
-using UnityEditor.Search;
-using System.Linq;
-using static UnityEditor.Progress;
 
 public class GameManager : MonoBehaviour, IDataPersistence
 {
@@ -48,7 +43,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         // 추후 옵션으로 프레임 설정 가능하게
         Application.targetFrameRate = 60;
-        UI_health.text = "X " + health;
     }
 
     void Update()
@@ -74,6 +68,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public void LoadData(GameData data)
     {
         this.health = data.health;
+        UI_health.text = "X " + health;
     }
 
     public void SaveData(ref GameData data)
