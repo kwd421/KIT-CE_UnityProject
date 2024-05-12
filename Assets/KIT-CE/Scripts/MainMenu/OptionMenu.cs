@@ -9,9 +9,18 @@ public class OptionMenu : MonoBehaviour
 {
     FullScreenMode screenMode;
     public Toggle fullscreenBtn;
+
     public TMP_Dropdown resolutionDropdown;
     List<Resolution> resolutions = new List<Resolution>();
     [SerializeField] int resolutionNum;
+
+    public Slider bgmSlider;
+    public Text bgmText;
+    private float bgmVolume;
+
+    public Slider sfxSlider;
+    public Text sfxText;
+    private float sfxVolume;
 
     private void Start()
     {
@@ -32,7 +41,8 @@ public class OptionMenu : MonoBehaviour
         {
             if (item.width < 800) continue;
             TMP_Dropdown.OptionData option = new TMP_Dropdown.OptionData();
-            option.text = item.width + " x " + item.height + " " + Mathf.Round((float)item.refreshRateRatio.value) + "Hz";
+            option.text = item.width + " x " + item.height + " "
+                + Mathf.Round((float)item.refreshRateRatio.value) + "Hz";
             resolutionDropdown.options.Add(option);
 
             if (item.width == Screen.width && item.height == Screen.height)
@@ -56,9 +66,20 @@ public class OptionMenu : MonoBehaviour
         screenMode = isFull ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
     }
 
+    public void SetVolumes()
+    {
+        bgmVolume = bgmSlider.value;
+        sfxVolume = sfxSlider.value;
+        bgmText.text = ((int)bgmVolume * 100).ToString();
+        sfxText.text = ((int)sfxVolume * 100).ToString();
+    }
+
     public void OkBtnClick()
     {
         Screen.SetResolution(resolutions[resolutionNum].width,
             resolutions[resolutionNum].height, screenMode);
+
+        AudioManager.instance.bgmVolume = bgmVolume;
+        AudioManager.instance.sfxVolume = sfxVolume;
     }
 }
