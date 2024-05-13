@@ -41,8 +41,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     private void Start()
     {
-        // 추후 옵션으로 프레임 설정 가능하게
-        Application.targetFrameRate = 60;
+
     }
 
     void Update()

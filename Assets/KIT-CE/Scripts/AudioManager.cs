@@ -28,6 +28,7 @@ public class AudioManager : MonoBehaviour
         }
         instance = this;
         Init();
+        DontDestroyOnLoad(gameObject);
     }
 
     void Init()
@@ -36,7 +37,7 @@ public class AudioManager : MonoBehaviour
         GameObject bgmObject = new GameObject("BgmPlayer");
         bgmObject.transform.parent = transform;
         bgmPlayer = bgmObject.AddComponent<AudioSource>();
-        bgmPlayer.playOnAwake = true;  // 시작시 소리 off
+        bgmPlayer.playOnAwake = true;  // 시작시 소리 on
         bgmPlayer.loop = true;
         bgmPlayer.volume = bgmVolume;
         bgmPlayer.clip = bgmClip;

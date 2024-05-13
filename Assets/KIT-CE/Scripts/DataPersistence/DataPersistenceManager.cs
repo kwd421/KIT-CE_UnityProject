@@ -23,6 +23,7 @@ public class DataPersistenceManager : MonoBehaviour
             Debug.LogError("이미 DataManager가 존재합니다.");
         }
         instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
