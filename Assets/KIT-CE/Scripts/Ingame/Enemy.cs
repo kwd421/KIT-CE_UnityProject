@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D rigid;
     protected Animator anim;
     protected SpriteRenderer sprite;
-    protected CircleCollider2D coll;
+    protected Collider2D coll;
 
     protected Vector3 initPos;
     private int initHP;
@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        coll = GetComponent<CircleCollider2D>();
+        coll = GetComponent<Collider2D>();
 
         initPos = transform.position;   // 초기위치 저장용 -> 게임 초기화 후 원위치
         initHP = this.HP;
