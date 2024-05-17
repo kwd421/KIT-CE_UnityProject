@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -41,6 +42,7 @@ public class AudioManager : MonoBehaviour
         bgmPlayer.loop = true;
         bgmPlayer.volume = bgmVolume;
         bgmPlayer.clip = bgmClip;
+        bgmPlayer.Play();
 
         // 효과음 플레이어 초기화
         GameObject sfxObject = new GameObject("SfxPlayer");
@@ -52,6 +54,19 @@ public class AudioManager : MonoBehaviour
             sfxPlayers[i] = sfxObject.AddComponent<AudioSource>();
             sfxPlayers[i].playOnAwake = false;
             sfxPlayers[i].volume = sfxVolume;
+        }
+    }
+   
+    public void BGMVolumeChange(float volume)
+    {
+        bgmPlayer.volume = volume;
+    }
+
+    public void SFXVolumeChange(float volume)
+    {
+        for (int i = 0; i < sfxPlayers.Length; i++)
+        {
+            sfxPlayers[i].volume = volume;
         }
     }
 
