@@ -56,6 +56,12 @@ public class AudioManager : MonoBehaviour
             sfxPlayers[i].volume = sfxVolume;
         }
     }
+
+    public void SetVolumes(float bgm, float sfx)
+    {
+        bgmVolume = bgm;
+        sfxVolume = sfx;
+    }
    
     public void BGMVolumeChange(float volume)
     {
