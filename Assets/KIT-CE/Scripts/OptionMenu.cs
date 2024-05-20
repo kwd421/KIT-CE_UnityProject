@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
-using Unity.Collections.LowLevel.Unsafe;
 
 public class OptionMenu : MonoBehaviour
 {
@@ -18,6 +17,10 @@ public class OptionMenu : MonoBehaviour
     List<int> fpsList = new List<int> { 30, 60, 120, 144, 240 };
     [SerializeField] int fpsNum;
 
+    public Slider masterSlider;
+    public Text masterVolumeSize;
+    private float masterVolume;
+
     public Slider bgmSlider;
     public Text bgmVolumeSize;
     private float bgmVolume;
@@ -26,9 +29,16 @@ public class OptionMenu : MonoBehaviour
     public Text sfxVolumeSize;
     private float sfxVolume;
 
+    public Text screenCheck;
+
     private void Start()
     {
         InitUI();
+    }
+
+    private void Update()
+    {
+        screenCheck.text = Screen.fullScreenMode.ToString();
     }
 
     public void InitUI()
@@ -69,7 +79,10 @@ public class OptionMenu : MonoBehaviour
         }
         resolutionDropdown.RefreshShownValue();
 
+        Debug.Log(Screen.fullScreenMode);   // Windowed
+
         fullscreenToggle.isOn = Screen.fullScreenMode.Equals(FullScreenMode.FullScreenWindow) ? true : false;
+        Debug.Log(fullscreenToggle.isOn);
     }
 
     // FPS 초기설정
@@ -78,21 +91,20 @@ public class OptionMenu : MonoBehaviour
         fpsDropdown.options.Clear();
 
         int optionNum = 0;
-        int monitorFPS = (int)Math.Round(Screen.currentResolution.refreshRateRatio.value);
+        int monitorHz = (int)Math.Round(Screen.currentResolution.refreshRateRatio.value);
         int currentFPS = Application.targetFrameRate;
-        Debug.Log(currentFPS);
 
         foreach(int item in fpsList)
         {
-            if (item > monitorFPS) break;
+            if (item > monitorHz) break;
             Dropdown.OptionData option = new Dropdown.OptionData();
             option.text = item + " FPS";
             fpsDropdown.options.Add(option);
 
-            // 게임의 프레임이 설정돼 있지 않을 때(옵션메뉴 첫 진입): 현재 모니터 프레임 표시
+            // 게임의 프레임이 설정돼 있지 않을 때(옵션메뉴 첫 진입): 현재 모니터 주사율 표시
             if (currentFPS == -1)
             {
-                if (item == monitorFPS)
+                if (item == monitorHz)
                 {
                     fpsDropdown.value = optionNum;
                 }
@@ -139,12 +151,16 @@ public class OptionMenu : MonoBehaviour
     // 현재 세팅값을 AudioManager에 적용
     public void SetVolumes()
     {
+        masterVolume = masterSlider.value;
         bgmVolume = bgmSlider.value;
         sfxVolume = sfxSlider.value;
-        AudioManager.instance.SetVolumes(bgmVolume, sfxVolume);
-        AudioManager.instance.SendMessage("BGMVolumeChange", bgmVolume);
-        AudioManager.instance.SendMessage("SFXVolumeChange", sfxVolume);
 
+        AudioListener.volume = masterVolume;
+        AudioManager.instance.SetVolumes(bgmVolume, sfxVolume);
+        AudioManager.instance.BGMVolumeChange(bgmVolume);
+        AudioManager.instance.SFXVolumeChange(sfxVolume);
+
+        masterVolumeSize.text = ((int)(masterVolume * 100)).ToString();
         bgmVolumeSize.text = ((int)(bgmVolume * 100)).ToString();
         sfxVolumeSize.text = ((int)(sfxVolume * 100)).ToString();
     }
@@ -155,9 +171,6 @@ public class OptionMenu : MonoBehaviour
         Screen.SetResolution(resolutions[resolutionNum].width,
             resolutions[resolutionNum].height, screenMode);
 
-        Debug.Log(fpsList[fpsNum].ToString());
         Application.targetFrameRate = fpsList[fpsNum];  // fps설정은 전역적으로 적용됨
-        Debug.Log(fpsList[fpsNum]);
-
     }
 }
