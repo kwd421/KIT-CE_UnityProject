@@ -23,16 +23,26 @@ public class RockEnemy : Enemy
         CancelInvoke();
         isDown = false;
 
-        base.OnEnable();
+        //base.OnEnable();
     }
 
     protected override void FixedUpdate()
     {
         if (isDown)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, UnityEngine.Vector3.down, 1.0f, LayerMask.GetMask("Platform"));
+            Debug.DrawRay(transform.position, UnityEngine.Vector3.down * 1, new Color(0, 1, 0));
+
+            if (hit.collider != null)
+            {
+                anim.SetBool("Bottom", true);
+            
+            }
             return;
+        }
 
         // 밑으로 raycast를 발사하여 플레이어가 잇는지 확인 
-        Debug.DrawRay(transform.position, UnityEngine.Vector3.down * 10, new Color(0, 1, 0));
+        //Debug.DrawRay(transform.position, UnityEngine.Vector3.down * 10, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, UnityEngine.Vector3.down, 10f, LayerMask.GetMask("Player"));
 
         if (rayHit.collider != null)
@@ -40,8 +50,6 @@ public class RockEnemy : Enemy
             isDown = true;
 
             rigid.bodyType = RigidbodyType2D.Dynamic;
-
-            anim.SetTrigger("Bottom");
             
             Invoke("Reset", 3.0f);
         }
@@ -50,6 +58,7 @@ public class RockEnemy : Enemy
     // 원래 자리로 이동
     void Reset()
     {
+        
         rigid.bodyType = RigidbodyType2D.Static;
 
         StartCoroutine(ResetCourtine());
@@ -72,5 +81,6 @@ public class RockEnemy : Enemy
         }
 
         isDown = false;
+        anim.SetBool("Bottom", false);
     }
 }

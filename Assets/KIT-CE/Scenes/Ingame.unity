@@ -11946,6 +11946,7 @@ MonoBehaviour:
   bgmVolumeSize: {fileID: 1257893286}
   sfxSlider: {fileID: 1257893285}
   sfxVolumeSize: {fileID: 1257893283}
+  screenCheck: {fileID: 0}
 --- !u!1001 &1954472221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12735,6 +12736,10 @@ PrefabInstance:
     - target: {fileID: 2040175138727320253, guid: 1cd5ab868471e9d4ab17978528cd90d7, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2040175138727320253, guid: 1cd5ab868471e9d4ab17978528cd90d7, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2040175138727320253, guid: 1cd5ab868471e9d4ab17978528cd90d7, type: 3}
       propertyPath: m_IsActive
