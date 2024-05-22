@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D rigid;
     protected Animator anim;
     protected SpriteRenderer sprite;
-    protected Collider2D coll;
+    [SerializeField] protected Collider2D coll;
 
     protected Vector3 initPos;
     private int initHP;
@@ -76,6 +76,8 @@ public class Enemy : MonoBehaviour
     {
         // RandomRange(포함, 미포함)
         // Set Next Act
+        if (isDead) return; //추가
+
         nextMove = Random.Range(-1, 2);
 
         float nextThinkTime = Random.Range(2f, 5f);
