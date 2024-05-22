@@ -10,14 +10,14 @@ public class OptionMenu : MonoBehaviour
     List<Resolution> resolutions = new List<Resolution>();
     [SerializeField] int resolutionNum;
 
+    public Dropdown screenDropdown;
+    List<FullScreenMode> screenModes = new List<FullScreenMode> { FullScreenMode.ExclusiveFullScreen,
+        FullScreenMode.FullScreenWindow, FullScreenMode.Windowed };
+    [SerializeField] int screenNum;
+
     public Dropdown fpsDropdown;
     List<int> fpsList = new List<int> { 30, 60, 120, 144, 240 };
     [SerializeField] int fpsNum;
-
-    public Dropdown screenDropdown;
-    List<FullScreenMode> screenModes = new List<FullScreenMode> { FullScreenMode.ExclusiveFullScreen, 
-        FullScreenMode.FullScreenWindow, FullScreenMode.Windowed };
-    [SerializeField] int screenNum;
 
     public Slider masterSlider;
     public Text masterVolumeSize;
@@ -31,17 +31,9 @@ public class OptionMenu : MonoBehaviour
     public Text sfxVolumeSize;
     private float sfxVolume;
 
-    public Text screenCheck;
-
     private void Start()
     {
         InitUI();
-    }
-
-    private void Update()
-    {
-        screenCheck.text = "current ScreenMode: " + Screen.fullScreenMode + "\n"
-            + screenDropdown.value;
     }
 
     public void InitUI()
@@ -174,15 +166,16 @@ public class OptionMenu : MonoBehaviour
         resolutionNum = x;
     }
 
+    public void ScreenDropboxOptionChange(int z)
+    {
+        screenNum = z;
+    }
+
     public void FPSDropboxOptionChange(int y)
     {
         fpsNum = y;
     }
 
-    public void ScreenDroopboxOptionChange(int z)
-    {
-        screenNum = z;
-    }
 
     // 현재 세팅값을 AudioManager에 적용
     public void SetVolumes()
