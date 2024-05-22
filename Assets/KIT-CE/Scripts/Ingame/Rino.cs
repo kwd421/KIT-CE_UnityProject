@@ -6,14 +6,23 @@ public class Rino : Enemy
 {
     [SerializeField] private bool isDash = false;
     private Vector3 dashDir = Vector3.zero;
+
+    protected override void OnEnable()
+    {
+        isDash = false;
+        dashDir = Vector3.zero;
+
+        base.OnEnable();
+    }
+
     protected override void FixedUpdate()
     {
-        if(isDead)
+        if (isDead)
             return;
 
         if (isDash)
         {
-            rigid.velocity = new Vector2(dashDir.x * speed * 5, rigid.velocity.y); 
+            rigid.velocity = new Vector2(dashDir.x * speed * 10, rigid.velocity.y);
 
             float moveXDir = (dashDir.x / Mathf.Abs(dashDir.x));
 
@@ -55,14 +64,28 @@ public class Rino : Enemy
         }
     }
 
+    public override void OnDamaged()
+    {
+        HP -= 1;
+        anim.SetTrigger("Hit");
+        if (HP <= 0)
+        {
+            OnDead();
+        }
+
+    }
+
     private void FindPlayer()
     {
-        var hit = Physics2D.CircleCast(transform.position, 5.0f, Vector2.up, 0.0f, LayerMask.GetMask("Player"));
+        Vector2 hitCheckPoisition = new Vector2(transform.position.x, transform.position.y + 0.5f);
+        RaycastHit2D hit = Physics2D.Raycast(hitCheckPoisition, Vector3.right * nextMove, 5.0f, LayerMask.GetMask("Player"));
+        Debug.DrawRay(hitCheckPoisition, Vector3.right * nextMove * 5.0f, new Color(1, 0, 0));
 
         if (hit.collider != null)
         {
+            Debug.Log($"asd");
             dashDir = (hit.collider.transform.position - transform.position).normalized;
             isDash = true;
-        }        
+        }
     }
 }
