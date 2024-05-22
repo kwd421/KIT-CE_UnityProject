@@ -6,9 +6,6 @@ using UnityEngine.UI;
 
 public class OptionMenu : MonoBehaviour
 {
-    FullScreenMode screenMode;
-    public Toggle fullscreenToggle;
-
     public Dropdown resolutionDropdown;
     List<Resolution> resolutions = new List<Resolution>();
     [SerializeField] int resolutionNum;
@@ -16,6 +13,11 @@ public class OptionMenu : MonoBehaviour
     public Dropdown fpsDropdown;
     List<int> fpsList = new List<int> { 30, 60, 120, 144, 240 };
     [SerializeField] int fpsNum;
+
+    public Dropdown screenDropdown;
+    List<FullScreenMode> screenModes = new List<FullScreenMode> { FullScreenMode.ExclusiveFullScreen, 
+        FullScreenMode.FullScreenWindow, FullScreenMode.Windowed };
+    [SerializeField] int screenNum;
 
     public Slider masterSlider;
     public Text masterVolumeSize;
@@ -38,12 +40,15 @@ public class OptionMenu : MonoBehaviour
 
     private void Update()
     {
-        screenCheck.text = Screen.fullScreenMode.ToString();
+        screenCheck.text = "current ScreenMode: " + Screen.fullScreenMode + "\n"
+            + screenDropdown.value;
     }
 
     public void InitUI()
     {
         ResInit();
+
+        ScreenInit();
 
         FPSInit();
 
@@ -53,6 +58,7 @@ public class OptionMenu : MonoBehaviour
     // 해상도 초기설정
     public void ResInit()
     {
+        Debug.Log("ResInit");
         Resolution temp = Screen.currentResolution;
         
         foreach (Resolution item in Screen.resolutions)
@@ -78,16 +84,45 @@ public class OptionMenu : MonoBehaviour
             optionNum++;
         }
         resolutionDropdown.RefreshShownValue();
+    }
 
-        Debug.Log(Screen.fullScreenMode);   // Windowed
+    public void ScreenInit()
+    {
+        Debug.Log("ScreenInit");
+        screenDropdown.options.Clear();
 
-        fullscreenToggle.isOn = Screen.fullScreenMode.Equals(FullScreenMode.FullScreenWindow) ? true : false;
-        Debug.Log(fullscreenToggle.isOn);
+        int optionNum = 0;
+
+        foreach (FullScreenMode item in screenModes)
+        {
+            Dropdown.OptionData option = new Dropdown.OptionData();
+            if(item.ToString() == "ExclusiveFullScreen")
+            {
+                option.text = "전체화면모드";
+            }
+            else if (item.ToString() == "FullScreenWindow")
+            {
+                option.text = "전체창모드";
+            }
+            else if (item.ToString() == "Windowed")
+            {
+                option.text = "창모드";
+            }
+            screenDropdown.options.Add(option);
+
+            if (item == Screen.fullScreenMode)
+            {
+                screenDropdown.value = optionNum;
+            }
+            optionNum++;
+        }
+        screenDropdown.RefreshShownValue();
     }
 
     // FPS 초기설정
     public void FPSInit()
     {
+        Debug.Log("FPSInit");
         fpsDropdown.options.Clear();
 
         int optionNum = 0;
@@ -125,6 +160,7 @@ public class OptionMenu : MonoBehaviour
     // AudioManager에서 사운드 설정값을 받아와 슬라이더와 Text에 적용
     public void SoundInit()
     {
+        Debug.Log("SoundInit");
         bgmVolume = AudioManager.instance.bgmVolume;
         sfxVolume = AudioManager.instance.sfxVolume;
         bgmSlider.value = AudioManager.instance.bgmVolume;
@@ -143,9 +179,9 @@ public class OptionMenu : MonoBehaviour
         fpsNum = y;
     }
 
-    public void FullScreenBtn(bool isFull)
+    public void ScreenDroopboxOptionChange(int z)
     {
-        screenMode = isFull ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        screenNum = z;
     }
 
     // 현재 세팅값을 AudioManager에 적용
@@ -169,7 +205,7 @@ public class OptionMenu : MonoBehaviour
     public void OkBtnClick()
     {
         Screen.SetResolution(resolutions[resolutionNum].width,
-            resolutions[resolutionNum].height, screenMode);
+            resolutions[resolutionNum].height, screenModes[screenNum]);
 
         Application.targetFrameRate = fpsList[fpsNum];  // fps설정은 전역적으로 적용됨
     }

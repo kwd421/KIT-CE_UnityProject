@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public int stageTime = 180;
     public float gameTime;
 
+    public VirtualCamera vCam;
     public Player player;
     public GameObject[] stages;
 
@@ -41,7 +42,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     private void Start()
     {
-
+        StageInit();
     }
 
     void Update()
@@ -60,8 +61,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
             isTimeOver = true;
             UI_restartBtn.SetActive(true);
         }
-
-        
     }
 
     public void LoadData(GameData data)
@@ -195,5 +194,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             enemies[i].gameObject.SetActive(true);
         }
+        vCam.MapBorder(stages[stageIndex]);
     }
 }
