@@ -31,9 +31,17 @@ public class OptionMenu : MonoBehaviour
     public Text sfxVolumeSize;
     private float sfxVolume;
 
+    public Text screenCheck;
+
     private void Start()
     {
         InitUI();
+    }
+
+    private void Update()
+    {
+        screenCheck.text = "Current ScreenMode: " + Screen.fullScreenMode + "\n"
+            + "Change to " + screenModes[screenNum];
     }
 
     public void InitUI()
@@ -55,6 +63,7 @@ public class OptionMenu : MonoBehaviour
         
         foreach (Resolution item in Screen.resolutions)
         {
+            // item.width == ~는 해상도가 800x600일 때 800x600이 한번 더 나오는 것 방지
             if (item.width < 800 || item.width == temp.width) continue;
             temp = item;
             resolutions.Add(item);
@@ -78,6 +87,7 @@ public class OptionMenu : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
     }
 
+    // 화면 모드 초기설정
     public void ScreenInit()
     {
         Debug.Log("ScreenInit");
