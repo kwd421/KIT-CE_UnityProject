@@ -31,18 +31,11 @@ public class OptionMenu : MonoBehaviour
     public Text sfxVolumeSize;
     private float sfxVolume;
 
-    public Text screenCheck;
-
     private void Start()
     {
         InitUI();
     }
 
-    private void Update()
-    {
-        screenCheck.text = "Current ScreenMode: " + Screen.fullScreenMode + "\n"
-            + "Change to " + screenModes[screenNum];
-    }
 
     public void InitUI()
     {
@@ -58,7 +51,6 @@ public class OptionMenu : MonoBehaviour
     // 해상도 초기설정
     public void ResInit()
     {
-        Debug.Log("ResInit");
         Resolution temp = Screen.currentResolution;
         
         foreach (Resolution item in Screen.resolutions)
@@ -90,7 +82,6 @@ public class OptionMenu : MonoBehaviour
     // 화면 모드 초기설정
     public void ScreenInit()
     {
-        Debug.Log("ScreenInit");
         screenDropdown.options.Clear();
 
         int optionNum = 0;
@@ -123,8 +114,7 @@ public class OptionMenu : MonoBehaviour
 
     // FPS 초기설정
     public void FPSInit()
-    {
-        Debug.Log("FPSInit");
+    { 
         fpsDropdown.options.Clear();
 
         int optionNum = 0;
@@ -162,7 +152,6 @@ public class OptionMenu : MonoBehaviour
     // AudioManager에서 사운드 설정값을 받아와 슬라이더와 Text에 적용
     public void SoundInit()
     {
-        Debug.Log("SoundInit");
         bgmVolume = AudioManager.instance.bgmVolume;
         sfxVolume = AudioManager.instance.sfxVolume;
         bgmSlider.value = AudioManager.instance.bgmVolume;
