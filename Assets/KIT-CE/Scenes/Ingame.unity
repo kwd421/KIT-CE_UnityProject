@@ -10901,8 +10901,8 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: -10.568746, y: 6.0601873}
-      - {x: -41.240395, y: 5.9456825}
-      - {x: -41.069275, y: -9.071853}
+      - {x: -45.965675, y: 6.019515}
+      - {x: -45.868393, y: -8.99802}
       - {x: 9.363047, y: -9.007801}
       - {x: 9.342002, y: 6.1378407}
   m_UseDelaunayMesh: 0
@@ -11744,6 +11744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a069720c8eaa0274198a7ac0a65b07a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coll: {fileID: 0}
   score: 0
   HP: 2
   speed: 1
