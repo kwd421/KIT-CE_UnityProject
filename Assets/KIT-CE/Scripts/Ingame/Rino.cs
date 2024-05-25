@@ -72,7 +72,6 @@ public class Rino : Enemy
         {
             OnDead();
         }
-
     }
 
     private void FindPlayer()
