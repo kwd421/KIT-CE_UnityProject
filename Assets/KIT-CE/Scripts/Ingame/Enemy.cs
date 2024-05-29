@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
     public int speed;
     protected bool isDead = false;
 
-    protected WaitForSeconds deactiveTime = new WaitForSeconds(3);  // 3ÃÊ°£ »ç¸Á °ü·Ã ÁøÇà
+    protected WaitForSeconds deactiveTime = new WaitForSeconds(3);   // 3ì´ˆê°„ ì‚¬ë§ ê´€ë ¨ ì§„í–‰
 
     protected virtual void Awake()
     {
@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         coll = GetComponent<Collider2D>();
 
-        initPos = transform.position;   // ÃÊ±âÀ§Ä¡ ÀúÀå¿ë -> °ÔÀÓ ÃÊ±âÈ­ ÈÄ ¿øÀ§Ä¡
+        initPos = transform.position;    // ì´ˆê¸°ìœ„ì¹˜ ì €ì¥ìš© -> ê²Œì„ ì´ˆê¸°í™” í›„ ì›ìœ„ì¹˜
         initHP = this.HP;
     }
 
@@ -49,11 +49,12 @@ public class Enemy : MonoBehaviour
         rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
 
         // Platform Check
-        Vector2 frontVec = new Vector2(transform.position.x + nextMove * 0.5f, transform.position.y);
+        Vector2 frontVec = new Vector2(transform.position.x + nextMove * 0.5f, transform.position.y + 0.1f);
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1.5f, LayerMask.GetMask("Platform"));
-        // rayÀÇ ½ÃÀÛÁ¡¿¡¼­ rayÀÇ ³¡Á¡±îÁö Layer°¡ Å½ÁöµÇÁö ¾ÊÀ¸¸é distance°¡ 0ÀÌ¶ó°í ³ª¿À±â´Â ÇÔ
-        // collider == null °ú distance == 0Àº ÀÏ´Ü µ¿ÀÏÇÏ°Ô ÀÛµ¿ÇÑ´Ù
+        // rayì˜ ì‹œì‘ì ì—ì„œ rayì˜ ëì ê¹Œì§€ Layerê°€ íƒì§€ë˜ì§€ ì•Šìœ¼ë©´ distanceê°€ 0ì´ë¼ê³  ë‚˜ì˜¤ê¸°ëŠ” í•¨
+        // collider == null ê³¼ distance == 0ì€ ì¼ë‹¨ ë™ì¼í•˜ê²Œ ì‘ë™í•œë‹¤
+
         if (rayHit.collider == null || rayHit.distance == 0)
         {
             nextMove = -nextMove;
@@ -74,9 +75,10 @@ public class Enemy : MonoBehaviour
     // Recursive
     protected virtual void Think()
     {
-        // RandomRange(Æ÷ÇÔ, ¹ÌÆ÷ÇÔ)
+        // RandomRange(í¬í•¨, ë¯¸í¬í•¨)
         // Set Next Act
-        if (isDead) return; //Ãß°¡
+
+        if (isDead) return;
 
         nextMove = Random.Range(-1, 2);
 
@@ -89,7 +91,6 @@ public class Enemy : MonoBehaviour
 
     public virtual void OnDamaged()
     {
-        // ÇÇ°İ ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
         HP -= 1;
         if(HP <= 0)
         {
@@ -97,55 +98,55 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // »ç¸Á ½Ã È£Ãâ
+    // ì‚¬ë§ ì‹œ í˜¸ì¶œ
     public virtual void OnDead()
     {
-        // isDead to true, Update ÁßÁö
+        // isDead to true, Update ì¤‘ì§€
         isDead = true;
 
-        // Velocity Zero, ¼Óµµ ÃÊ±âÈ­
+        // Velocity Zero, ì†ë„ ì´ˆê¸°í™”
         rigid.velocity = Vector3.zero;
 
-        // Sprite Alpha, ¹İÅõ¸íÇØÁü, »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ÀÖ´Ù¸é »ç¿ëX
+        // Sprite Alpha, ë°˜íˆ¬ëª…í•´ì§, ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ìˆë‹¤ë©´ ì‚¬ìš©X
         sprite.color = new Color(1, 1, 1, 0.4f);
 
-        // Sprite Flip Y, »óÇÏ¹İÀü, »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ÀÖ´Ù¸é »ç¿ëX
+        // Sprite Flip Y, ìƒí•˜ë°˜ì „, ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ìˆë‹¤ë©´ ì‚¬ìš©X
         sprite.flipY = true;
 
-        // Collider Disable, ¾Æ·¡·Î Ãß¶ô, »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ÀÖ´Ù¸é »ç¿ëX
+        // Collider Disable, ì•„ë˜ë¡œ ì¶”ë½, ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ìˆë‹¤ë©´ ì‚¬ìš©X
         coll.enabled = false;
 
-        // Die Effect Jump, »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ÀÖ´Ù¸é »ç¿ëX
+        // Die Effect Jump, ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ìˆë‹¤ë©´ ì‚¬ìš©X
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
-        // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+        // ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
 
         // Object Deactivate
         StartCoroutine(Deactive());
     }
 
-    // »ç¸Á ½Ã È£Ãâ
+    // ì‚¬ë§ ì‹œ í˜¸ì¶œ
     public virtual void Init()
     {
-        // HP ÃÊ±âÈ­
+        // HP ì´ˆê¸°í™”
         HP = initHP;
 
-        // isDead to false, Update ½ÇÇà
+        // isDead to false, Update ì‹¤í–‰
         isDead = false;
 
-        // À§Ä¡ ÃÊ±âÈ­
+        // ìœ„ì¹˜ ì´ˆê¸°í™”
         transform.position = initPos;
 
-        // Velocity Zero, ¼Óµµ ÃÊ±âÈ­
+        // Velocity Zero, ì†ë„ ì´ˆê¸°í™”
         rigid.velocity = Vector3.zero;
 
-        // Sprite Alpha, Åõ¸íµµ º¹±¸
+        // Sprite Alpha, íˆ¬ëª…ë„ ë³µêµ¬
         sprite.color = new Color(1, 1, 1);
 
-        // Sprite Flip Y, »óÇÏ¹İÀü º¹±¸
+        // Sprite Flip Y, ìƒí•˜ë°˜ì „ ë³µêµ¬
         sprite.flipY = false;
 
-        // Collider Enable, Ãæµ¹ ¹°¸® º¹±¸
+        // Collider Enable, ì¶©ëŒ ë¬¼ë¦¬ ë³µêµ¬
         coll.enabled = true;
     }
 
