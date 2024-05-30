@@ -190,11 +190,10 @@ public class Player : MonoBehaviour
     {
         Enemy enemy = _enemy.GetComponent<Enemy>();
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Attack);
-        // Point
-        GameManager.instance.stagePoint += enemy.score;
+        // Point는 Enemy에서 계산
 
         // Player Jump Force
-        rigid.AddForce(Vector2.up * 12, ForceMode2D.Impulse);
+        rigid.AddForce(Vector2.up * 15, ForceMode2D.Impulse);
 
         // Enemy Die
         // Enemy에 의해 상속된 _enemy를 Get. Override된 OnDamaged()함수가 있다면 그것이 사용됨

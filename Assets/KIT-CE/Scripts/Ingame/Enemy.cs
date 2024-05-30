@@ -104,6 +104,9 @@ public class Enemy : MonoBehaviour
         // isDead to true, Update 중지
         isDead = true;
 
+        // 점수 추가
+        GameManager.instance.stagePoint += score;
+
         // Velocity Zero, 속도 초기화
         rigid.velocity = Vector3.zero;
 
