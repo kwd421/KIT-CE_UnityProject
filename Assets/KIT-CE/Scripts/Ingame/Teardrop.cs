@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Teardrop : MonoBehaviour
@@ -9,6 +10,8 @@ public class Teardrop : MonoBehaviour
     Vector2 dir;
     float disappearTime = 4f;
     float currentTime;
+    Vector2 playerPos;
+    Vector2 spawnPos;
 
     private void Awake()
     {
@@ -16,12 +19,16 @@ public class Teardrop : MonoBehaviour
     }
     private void OnEnable()
     {
+        playerPos = GameManager.instance.player.transform.position;
+        spawnPos = transform.parent.position;
         // 위치, 속도값 초기화
-        transform.localPosition = Vector3.zero;
+        transform.position = spawnPos;
         rigid.velocity = Vector3.zero;
         // 방향, 속도 설정
-        dir = GameManager.instance.player.transform.position - transform.parent.position;
-        rigid.AddForce(new Vector2(teardropSpeed * dir.normalized.x, teardropSpeed), ForceMode2D.Impulse);
+        dir = (playerPos - spawnPos).normalized;
+        rigid.AddForce(new Vector2(teardropSpeed * dir.x, teardropSpeed), ForceMode2D.Impulse);
+
+        transform.SetParent(null);
     }
 
     void Update()
@@ -44,4 +51,5 @@ public class Teardrop : MonoBehaviour
             transform.gameObject.SetActive(false);
         }
     }
+
 }

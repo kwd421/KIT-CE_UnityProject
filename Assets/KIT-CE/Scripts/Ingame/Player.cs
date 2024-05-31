@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     bool isStop = false;
     bool isHit = false; // 피격 시 noJumpTime초만큼 점프 불가케 하기 위한 변수
     int dir;
+    bool isDead = false;
 
     // 무적 시간
     WaitForSeconds invinTime = new WaitForSeconds(1.5f);
@@ -37,6 +38,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (isDead)
+            return;
         // 키입력은 Update에, 실제 이동은 FixedUpdate에서
 
         // Jump키 눌렀을 때 + 지상 + 피격 상태 아닐 때
@@ -258,6 +261,8 @@ public class Player : MonoBehaviour
 
     public void Init()
     {
+        isDead = false;
+
         // Sprite Alpha
         sprite.color = new Color(1, 1, 1);
 
@@ -270,6 +275,7 @@ public class Player : MonoBehaviour
 
     public void Dead()
     {
+        isDead = true;
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Die);
         // Sprite Alpha
         sprite.color = new Color(1, 1, 1, 0.4f);

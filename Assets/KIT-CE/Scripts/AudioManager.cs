@@ -91,4 +91,20 @@ public class AudioManager : MonoBehaviour
             break;
         }
     }
+
+    public void PlaySfx(AudioClip sfx)
+    {
+        for (int i = 0; i < sfxPlayers.Length; i++)
+        {
+            int loopIndex = (i + channelIndex) % sfxPlayers.Length;
+
+            if (sfxPlayers[loopIndex].isPlaying)
+                continue;
+
+            channelIndex = loopIndex;
+            sfxPlayers[loopIndex].clip = sfx;
+            sfxPlayers[loopIndex].Play();
+            break;
+        }
+    }
 }

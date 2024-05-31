@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Tilemaps;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.Rendering.Universal;
 
 public class Boss : MonoBehaviour
 {
@@ -10,10 +9,14 @@ public class Boss : MonoBehaviour
     // 1페이즈용 1번안대
     Transform eyePatch1;
     // 1페이즈용 눈
-    Transform eye;
+    public Transform eye;
     // 2페이즈용 2번안대
     Transform eyePatch2;
     Rigidbody2D rigid;
+    Vector2 initPos;
+    bool phase2 = false;
+
+    enum Pattern { A, B, C };
 
     // 화면 밖으로 안나가게 체크
     Vector2 inView;
@@ -28,6 +31,8 @@ public class Boss : MonoBehaviour
     // 수평/수직 이동방향
     int dirX, dirY;
     bool isDead = false;
+    // 패턴 끝난 후 다음패턴 시작 시간
+    WaitForSeconds nextPattern = new WaitForSeconds(3f);
 
     [Header ("Pattern A")]
     public GameObject teardrop;
@@ -36,9 +41,17 @@ public class Boss : MonoBehaviour
     List<GameObject> tears = new List<GameObject>();
     WaitForSeconds tearCreateTime = new WaitForSeconds(0.5f);
     public int tearCount;
+    public float tearSpeed;
+    int attackCount;
+    public AudioClip patternASound;
 
-    [Header("Pattern C")]
+    [Header("Pattern B")]
+    public GameObject pillarParent;
+    public AudioClip patternBSound;
+
+    [Header ("Pattern C")]
     public GameObject[] attackBars;
+    public AudioClip patternCSound;
     
 
     private void Awake()
@@ -47,16 +60,21 @@ public class Boss : MonoBehaviour
         eyePatch1 = transform.GetChild(0);
         eye = transform.GetChild(1);
         rigid = GetComponent<Rigidbody2D>();
-    }
+        initPos = transform.position;
 
-    private void Start()
-    {
-        hp = maxHp;
         // 공격용 눈물 생성(오브젝트풀)
         MakeTears();
-        // 이동 코루틴 시작
-        StartCoroutine(Move());
-        StartCoroutine(PatternC());
+    }
+
+    private void OnEnable()
+    {
+        Init();
+    }
+
+    private void Update()
+    {
+        if(isDead)
+            StopAllCoroutines();
     }
 
 
@@ -137,7 +155,7 @@ public class Boss : MonoBehaviour
         // 2페이즈 ON
         if(hp <= 0.5f * maxHp)
         {
-            
+            phase2 = true;
         }
         else if(hp <= 0)
         {
@@ -148,7 +166,7 @@ public class Boss : MonoBehaviour
     IEnumerator DamagedCoroutine()
     {
         // hp가 6 이상일 때 한 눈만 피격
-        if(hp > 0.5f * maxHp)
+        if(!phase2)
         {
             eye.GetComponent<Collider2D>().enabled = false;
             sprite.color = new Color(1, 0, 0, 0.8f);
@@ -177,6 +195,9 @@ public class Boss : MonoBehaviour
         {
             // 눈물 생성, 부모는 눈
             GameObject temp = Instantiate(teardrop, eye);
+            if (i % 3 == 0) temp.GetComponent<Teardrop>().teardropSpeed = 4f;
+            else if (i % 2 == 1) temp.GetComponent<Teardrop>().teardropSpeed = 5f;
+            else temp.GetComponent<Teardrop>().teardropSpeed = 6f;
             // 눈물 비활성화
             temp.SetActive(false);
             // 눈물 오브젝트 풀에 담기
@@ -184,40 +205,103 @@ public class Boss : MonoBehaviour
         }
     }
 
+    IEnumerator BossPatterns()
+    {
+        // 잠깐 기다리고 패턴 시작, 패턴 끝난 후 재귀
+        yield return nextPattern;
+        int select;
+        select = Random.Range(0, 3);
+        switch(select)
+        {
+            case ((int)Pattern.A):
+                yield return StartCoroutine(PatternA());
+                break;
+            case ((int)Pattern.B):
+                yield return StartCoroutine(PatternB());
+                break;
+            case ((int)Pattern.C):
+                yield return StartCoroutine(PatternC());
+                break;
+        }        
+        StartCoroutine(BossPatterns());
+    }
 
 
     IEnumerator PatternA()
     {
-        yield return new WaitForSeconds(2f);
+        AudioManager.instance.PlaySfx(patternASound);
         int count = 0;
-        while(count < tearCount)
+        if (!phase2)
         {
-            tears[count].SetActive(true);
-            count++;
-            yield return tearCreateTime;
-        }        
+            // attackCount만큼 눈물 생성
+            attackCount = 3;
+            while (count < attackCount)
+            {
+                // 현재 눈의 위치로 시작점 설정 후 생성
+                tears[count].transform.SetParent(eye);
+                tears[count].SetActive(true);
+                count++;
+                yield return tearCreateTime;
+            }
+        }
+        else
+        {
+            attackCount = 6;
+            while (count < attackCount)
+            {
+                tears[count].SetActive(true);
+                count++;
+                yield return tearCreateTime;
+            }
+        }
+               
     }
+    
     
     IEnumerator PatternB()
     {
-        yield return null;
+        AudioManager.instance.PlaySfx(patternBSound);
+        eye.GetChild(0).gameObject.SetActive(false);
+        // 패턴 경고용 붉은 안광 활성화, 1.5초 후 눈 주위로 공격패턴 생성
+        // 패턴B(pillarParent)는 eye의 자식으로 있음
+        eye.GetChild(0).gameObject.SetActive(true);
+        yield return new WaitForSeconds(1.5f);        
+        pillarParent.SetActive(true);
+        // 페이즈 1일 때 속도
+        if(!phase2)
+        {
+            pillarParent.GetComponent<PatternB>().SetSpeed(4f);
+        }
+        else
+        // 페이즈 2일 때 속도
+        {
+            pillarParent.GetComponent<PatternB>().SetSpeed(7f);
+        }
+        // 2초간 페이즈당 속도만큼 회전 후 비활성화. 다음 패턴으로 넘어간다.
+        yield return new WaitForSeconds(2f);
+        eye.GetChild(0).gameObject.SetActive(false);
+        pillarParent.SetActive(false);
     }
 
+    // 1~3층까지의 발판에 공격패턴을 생성
     IEnumerator PatternC()
     {
-        // 1페이즈 패턴
-        if(hp < 0.5f * maxHp)
+        AudioManager.instance.PlaySfx(patternCSound);
+        // 1페이즈 패턴: 무작위 층 하나에 공격패턴 생성
+        if (!phase2)
         {
             int temp = Random.Range(0, 3);
             GameObject bar = attackBars[temp];
+            // 경고
             yield return StartCoroutine(Warning(bar)); 
+            // 공격
             yield return StartCoroutine(BarAttack(bar));
         }
-        // 2페이즈 패턴
+        // 2페이즈 패턴: 무자구이 층 둘에 공격패턴 생성
         else
         {
             int tempA, tempB;
-            // tempA와 tempB를 다른 값으로
+            // tempA와 tempB가 중복이면 tempB를 다시 받아옴
             tempA = Random.Range(0, 3);
             do
             {
@@ -226,8 +310,11 @@ public class Boss : MonoBehaviour
             while (tempA == tempB);
             GameObject barA = attackBars[tempA];
             GameObject barB = attackBars[tempB];
+            
+            // 경고
             StartCoroutine(Warning(barA));
             yield return StartCoroutine(Warning(barB));
+            // 공격
             StartCoroutine(BarAttack(barA));
             yield return StartCoroutine(BarAttack(barB));
         }
@@ -236,6 +323,9 @@ public class Boss : MonoBehaviour
     IEnumerator Warning(GameObject bar)
     {
         WaitForSeconds flickTime = new WaitForSeconds(0.1f);
+        Light2D glow = bar.GetComponentInChildren<Light2D>();
+        glow.color = new Color(1, 0, 0);
+        glow.volumeIntensity = 0;
 
         // 처음은 경고
         bar.GetComponent<Collider2D>().enabled = false;
@@ -244,14 +334,18 @@ public class Boss : MonoBehaviour
         // 공격 경보 깜빡이게
         for (int count = 0; count < 2; count++)
         {
+            // 색 증가
             for (int i = 1; i <= 10; i++)
             {
-                bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.1f * i);
+                bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.1f * i);                
+                glow.volumeIntensity += 0.1f;
                 yield return flickTime;
             }
+            // 색 감소
             for (int i = 9; i >= 0; i--)
             {
                 bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.1f * i);
+                glow.volumeIntensity -= 0.1f;
                 yield return flickTime;
             }
         }
@@ -260,13 +354,18 @@ public class Boss : MonoBehaviour
     IEnumerator BarAttack(GameObject bar)
     {
         WaitForSeconds flickTime = new WaitForSeconds(0.1f);
+        Light2D glow = bar.GetComponentInChildren<Light2D>();
+        glow.color = new Color(0.933f, 0.867f, 0.616f);
+        glow.volumeIntensity = 0;
 
-        // 점점 색 선명해지다가 1초 후 공격
-        for(int i=1; i<=10; i++)
+        // 점점 색 선명해지다가 0.5초 후 공격
+        for (int i=1; i<=5; i++)
         {
-            bar.GetComponent<SpriteRenderer>().color = new Color(0.933f, 0.867f, 0.616f, 0.1f * i);
+            bar.GetComponent<SpriteRenderer>().color = new Color(0.933f, 0.867f, 0.616f, 0.2f * i);
+            glow.volumeIntensity += 0.2f;
             yield return flickTime;
         }
+        glow.volumeIntensity = 2f;
         bar.GetComponent<Collider2D>().enabled = true;
         yield return new WaitForSeconds(0.5f);
         bar.SetActive(false);
@@ -275,7 +374,39 @@ public class Boss : MonoBehaviour
     void OnDead()
     {
         isDead = true;
-
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Finish);
+        // To Next Stage
+        GameManager.instance.NextStage();
     }
 
+    public virtual void Init()
+    {
+        // HP 초기화
+        hp = maxHp;
+
+        // isDead to false, Update 실행
+        isDead = false;
+
+        // 위치 초기화
+        transform.position = initPos;
+
+        // 패턴A 눈물 초기화
+        foreach(GameObject tear in tears)
+        {
+            tear.SetActive(false);
+        }
+        // 패턴B 안광 및 공격 기둥 초기화
+        // !!!!!!!!!!!!문제의코드!!!!!!!!!!!!
+        //eye.GetComponent<Light2D>().gameObject.SetActive(false);
+        pillarParent.SetActive(false);
+        // 패턴C bar들 초기화
+        foreach(GameObject bar in attackBars)
+        {
+            bar.SetActive(false);
+        }
+
+        // 이동 코루틴 시작
+        StartCoroutine(Move());
+        StartCoroutine(BossPatterns());
+    }
 }
