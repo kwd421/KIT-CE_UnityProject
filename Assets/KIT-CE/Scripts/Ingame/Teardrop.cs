@@ -12,15 +12,20 @@ public class Teardrop : MonoBehaviour
     float currentTime;
     Vector2 playerPos;
     Vector2 spawnPos;
+    // 첫 활성화 시 부모오브젝트 받아옴
+    GameObject parent;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
+        parent = transform.parent.gameObject;
     }
     private void OnEnable()
     {
+        // 현재 플레이어의 위치
         playerPos = GameManager.instance.player.transform.position;
-        spawnPos = transform.parent.position;
+        // 눈물이 나올 위치는 Awake에서 받아왔던 오브젝트(eye)의 위치
+        spawnPos = parent.transform.position;
         // 위치, 속도값 초기화
         transform.position = spawnPos;
         rigid.velocity = Vector3.zero;
@@ -28,6 +33,7 @@ public class Teardrop : MonoBehaviour
         dir = (playerPos - spawnPos).normalized;
         rigid.AddForce(new Vector2(teardropSpeed * dir.x, teardropSpeed), ForceMode2D.Impulse);
 
+        // 부모 해제(부모의 Y축 flip따라 눈물도 flip되지 않게)
         transform.SetParent(null);
     }
 
@@ -51,5 +57,4 @@ public class Teardrop : MonoBehaviour
             transform.gameObject.SetActive(false);
         }
     }
-
 }

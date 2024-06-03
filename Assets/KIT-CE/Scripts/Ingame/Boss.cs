@@ -23,6 +23,7 @@ public class Boss : MonoBehaviour
 
     [Header ("Boss Infos")]
     public int maxHp;
+    [SerializeField]
     int hp;
     // 이동속도
     public float moveSpeed;
@@ -33,6 +34,10 @@ public class Boss : MonoBehaviour
     bool isDead = false;
     // 패턴 끝난 후 다음패턴 시작 시간
     WaitForSeconds nextPattern = new WaitForSeconds(3f);
+    // 패턴 준비시간
+    WaitForSeconds patternInitTime = new WaitForSeconds(2f);
+    public AudioClip hitSound;
+    public AudioClip dieSound;
 
     [Header ("Pattern A")]
     public GameObject teardrop;
@@ -151,13 +156,15 @@ public class Boss : MonoBehaviour
     void OnDamaged()
     {
         hp--;
+        AudioManager.instance.PlaySfx(hitSound);
         StartCoroutine(DamagedCoroutine());
-        // 2페이즈 ON
+        // 체력이 절반 이하일 때 2페이즈 ON
         if(hp <= 0.5f * maxHp)
         {
             phase2 = true;
         }
-        else if(hp <= 0)
+        // 체력이 0 이하이면 사망
+        if(hp <= 0)
         {
             OnDead();
         }
@@ -230,6 +237,7 @@ public class Boss : MonoBehaviour
     IEnumerator PatternA()
     {
         AudioManager.instance.PlaySfx(patternASound);
+        yield return patternInitTime;
         int count = 0;
         if (!phase2)
         {
@@ -238,7 +246,7 @@ public class Boss : MonoBehaviour
             while (count < attackCount)
             {
                 // 현재 눈의 위치로 시작점 설정 후 생성
-                tears[count].transform.SetParent(eye);
+                //tears[count].transform.SetParent(eye);
                 tears[count].SetActive(true);
                 count++;
                 yield return tearCreateTime;
@@ -261,21 +269,22 @@ public class Boss : MonoBehaviour
     IEnumerator PatternB()
     {
         AudioManager.instance.PlaySfx(patternBSound);
-        eye.GetChild(0).gameObject.SetActive(false);
-        // 패턴 경고용 붉은 안광 활성화, 1.5초 후 눈 주위로 공격패턴 생성
         // 패턴B(pillarParent)는 eye의 자식으로 있음
+        // 패턴 경고용 붉은 안광 활성화
         eye.GetChild(0).gameObject.SetActive(true);
-        yield return new WaitForSeconds(1.5f);        
+        yield return patternInitTime;
+        // 0.5초 후 눈 주위로 공격패턴 생성
+        yield return new WaitForSeconds(0.5f);        
         pillarParent.SetActive(true);
         // 페이즈 1일 때 속도
         if(!phase2)
         {
-            pillarParent.GetComponent<PatternB>().SetSpeed(4f);
+            pillarParent.GetComponent<PatternB>().SetSpeed(3f);
         }
         else
         // 페이즈 2일 때 속도
         {
-            pillarParent.GetComponent<PatternB>().SetSpeed(7f);
+            pillarParent.GetComponent<PatternB>().SetSpeed(8f);
         }
         // 2초간 페이즈당 속도만큼 회전 후 비활성화. 다음 패턴으로 넘어간다.
         yield return new WaitForSeconds(2f);
@@ -287,6 +296,7 @@ public class Boss : MonoBehaviour
     IEnumerator PatternC()
     {
         AudioManager.instance.PlaySfx(patternCSound);
+        yield return patternInitTime;
         // 1페이즈 패턴: 무작위 층 하나에 공격패턴 생성
         if (!phase2)
         {
@@ -320,6 +330,7 @@ public class Boss : MonoBehaviour
         }
     }
 
+    // 붉은빛으로 경고등
     IEnumerator Warning(GameObject bar)
     {
         WaitForSeconds flickTime = new WaitForSeconds(0.1f);
@@ -335,22 +346,23 @@ public class Boss : MonoBehaviour
         for (int count = 0; count < 2; count++)
         {
             // 색 증가
-            for (int i = 1; i <= 10; i++)
+            for (int i = 1; i <= 5; i++)
             {
-                bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.1f * i);                
+                bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.2f * i);                
                 glow.volumeIntensity += 0.1f;
                 yield return flickTime;
             }
             // 색 감소
-            for (int i = 9; i >= 0; i--)
+            for (int i = 4; i >= 0; i--)
             {
-                bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.1f * i);
+                bar.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.2f * i);
                 glow.volumeIntensity -= 0.1f;
                 yield return flickTime;
             }
         }
     }
 
+    // 노란빛으로 공격
     IEnumerator BarAttack(GameObject bar)
     {
         WaitForSeconds flickTime = new WaitForSeconds(0.1f);
@@ -374,7 +386,8 @@ public class Boss : MonoBehaviour
     void OnDead()
     {
         isDead = true;
-        AudioManager.instance.PlaySfx(AudioManager.Sfx.Finish);
+        AudioManager.instance.PlayBGM(null);
+        AudioManager.instance.PlaySfx(dieSound);
         // To Next Stage
         GameManager.instance.NextStage();
     }
@@ -383,6 +396,7 @@ public class Boss : MonoBehaviour
     {
         // HP 초기화
         hp = maxHp;
+        phase2 = false;
 
         // isDead to false, Update 실행
         isDead = false;
@@ -396,8 +410,7 @@ public class Boss : MonoBehaviour
             tear.SetActive(false);
         }
         // 패턴B 안광 및 공격 기둥 초기화
-        // !!!!!!!!!!!!문제의코드!!!!!!!!!!!!
-        //eye.GetComponent<Light2D>().gameObject.SetActive(false);
+        eye.GetChild(0).gameObject.SetActive(false);
         pillarParent.SetActive(false);
         // 패턴C bar들 초기화
         foreach(GameObject bar in attackBars)

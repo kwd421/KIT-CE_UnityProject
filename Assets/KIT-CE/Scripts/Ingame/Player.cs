@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    // 공중 enemy 전용 함수, rigidbody의 body type이 kinematic인 object는 collision 함수가 동작하지 않음
+    // boss 전용 함수
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -203,7 +203,7 @@ public class Player : MonoBehaviour
         enemy.OnDamaged();
     }
 
-    void OnDamaged(Vector2 targetPos)
+    public void OnDamaged(Vector2 targetPos)
     {
 
         // Health Down
@@ -249,7 +249,7 @@ public class Player : MonoBehaviour
         sprite.color = new Color(1, 1, 1, 1);
     }
 
-    IEnumerator InvincibleCoroutine(Vector2 targetPos)
+    public IEnumerator InvincibleCoroutine(Vector2 targetPos)
     {
         OnDamaged(targetPos);
         isHit = true;   

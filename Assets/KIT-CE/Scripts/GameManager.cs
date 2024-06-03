@@ -79,14 +79,25 @@ public class GameManager : MonoBehaviour, IDataPersistence
         // Stage Change
         if (stageIndex < stages.Length - 1)
         {
+            // 현재 스테이지 비활성화
             stages[stageIndex].SetActive(false);
             stageIndex++;
 
+            // 다음 스테이지 활성화
             stages[stageIndex].SetActive(true);
+
             // 스테이지 하위 오브젝트들 전부 Active
             StageInit();
 
+            // 플레이어 위치 재설정
             PlayerReposition();
+
+            // 스테이지가 보스 스테이지면 보스bgm
+            if (stages[stageIndex].name.Contains("Boss"))
+            {
+                AudioManager.instance.PlayBGM(AudioManager.instance.bgmClips[1]);
+            }
+            
 
             // Calculate Point
             totalPoint += stagePoint;
@@ -125,7 +136,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
             player.Dead();
 
             // Result UI
-            Debug.Log("죽었습니다!");
 
             // Retry Button UI
             UI_restartBtn.SetActive(true);
@@ -134,14 +144,27 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // 추락 감지
         if (collision.gameObject.tag == "Player")
         {
-            if(health > 0)
+            // 플레이어가 무적상태일 때
+            if(player.gameObject.layer == LayerMask.NameToLayer("PlayerDamaged"))
             {
-                // Health Down
                 PlayerReposition();
             }
-            HealthDown();
+            // 플레이어가 무적상태가 아니고, 체력이 0보다 클 때
+            else if(health > 0)
+            {
+                // Health Up 후 InvincibleCoroutine(여기에 Health Down있기때문)
+                health++;
+                player.StartCoroutine(player.InvincibleCoroutine(transform.position));
+                PlayerReposition();
+                HealthDown();
+            }
+            else
+            {
+                HealthDown();
+            }
         }
     }
 
@@ -153,6 +176,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void Restart()
     {
+        // 첫 스테이지로 돌아갈 시 일반 bgm재생
+        AudioManager.instance.PlayBGM(AudioManager.instance.bgmClips[0]);
         Time.timeScale = 1;
         isTimeOver = false;
 
@@ -182,6 +207,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         // 스테이지 활성화
         stages[stageIndex].SetActive(true);
+        
         // 스테이지 하위 Item 활성화
         Item[] items = stages[stageIndex].GetComponentsInChildren<Item>(true);
         for (int i = 0; i < items.Length; i++)

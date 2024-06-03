@@ -2898,7 +2898,7 @@ Transform:
   m_GameObject: {fileID: 447023890}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.19, y: -2.67, z: 10}
+  m_LocalPosition: {x: -8.23, y: -2.67, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2920,18 +2920,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eye: {fileID: 0}
   maxHp: 10
+  hp: 0
   moveSpeed: 3
+  hitSound: {fileID: 8300000, guid: b771e2d0fdcbf01478ac6b7b1bc1a1e1, type: 3}
+  dieSound: {fileID: 8300000, guid: 61af13780c1d5b146ae3fa7b09900876, type: 3}
   teardrop: {fileID: 5035396726642941679, guid: 005d62ba245f62c4e93dbf9282a48204, type: 3}
   tearCount: 6
   tearSpeed: 5
-  patternASound: {fileID: 8300000, guid: 23fa38f69fd3e8b4e9033b9ef76dfe4d, type: 3}
+  patternASound: {fileID: 8300000, guid: fa288c3ac4553224ab8e2c8293983896, type: 3}
   pillarParent: {fileID: 1665582886}
-  patternBSound: {fileID: 8300000, guid: eb20374e0faa9d44e9d7be0ff1f0b1a1, type: 3}
+  patternBSound: {fileID: 8300000, guid: cd463530df2eac84aabc967af9cf93b7, type: 3}
   attackBars:
   - {fileID: 180799655}
   - {fileID: 796214756}
   - {fileID: 183030015}
-  patternCSound: {fileID: 8300000, guid: 353443df389b8d144801bd873af7fd52, type: 3}
+  patternCSound: {fileID: 8300000, guid: 0ed9c54dd5f1d3e49adf9d94ae319f57, type: 3}
 --- !u!212 &447023893
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -16005,8 +16008,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1394796886}
   - component: {fileID: 1394796887}
-  - component: {fileID: 1394796888}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16062,7 +16064,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.022001266}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -16073,35 +16075,8 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.15}
+  m_Size: {x: 1, y: 0.39949965}
   m_EdgeRadius: 0
---- !u!50 &1394796888
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1394796885}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 0
 --- !u!1 &1427429419
 GameObject:
   m_ObjectHideFlags: 0
@@ -21061,7 +21036,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1813554280}
   - component: {fileID: 1813554281}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: EyePatch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
