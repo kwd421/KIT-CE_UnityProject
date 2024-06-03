@@ -115,6 +115,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             // Result UI
             Debug.Log("게임 클리어");
 
+            // 게임 클리어 후 재시작하고 죽어서 Retry하면 Clear! 가 나오게 됨
             // Restart Button UI
             btnText.text = "Clear!";
             UI_restartBtn.SetActive(true);

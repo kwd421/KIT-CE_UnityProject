@@ -34,6 +34,7 @@ public class Teardrop : MonoBehaviour
         rigid.AddForce(new Vector2(teardropSpeed * dir.x, teardropSpeed), ForceMode2D.Impulse);
 
         // 부모 해제(부모의 Y축 flip따라 눈물도 flip되지 않게)
+        // 눈물 패턴때 Retry시 눈물이 함께 사라지지 않음
         transform.SetParent(null);
     }
 

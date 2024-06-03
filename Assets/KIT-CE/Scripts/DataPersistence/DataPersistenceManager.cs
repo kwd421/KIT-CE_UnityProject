@@ -55,7 +55,6 @@ public class DataPersistenceManager : MonoBehaviour
             dataPersistenceObj.LoadData(gameData);
         }
 
-        Debug.Log("Loaded HP count = " + gameData.health);
     }
 
     public void SaveGame()
@@ -67,7 +66,6 @@ public class DataPersistenceManager : MonoBehaviour
             dataPersistenceObj.SaveData(ref gameData);
         }
 
-        Debug.Log("Saved HP count = " + gameData.health);
         dataHandler.Save(gameData);
     }
 

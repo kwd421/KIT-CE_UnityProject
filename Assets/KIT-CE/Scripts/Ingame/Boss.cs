@@ -398,6 +398,11 @@ public class Boss : MonoBehaviour
         hp = maxHp;
         phase2 = false;
 
+        // 눈 충돌체, 색깔 초기화
+        eyePatch1.GetComponent<Collider2D>().enabled = true;
+        eye.GetComponent<Collider2D>().enabled = true;
+        sprite.color = new Color(1, 1, 1);
+
         // isDead to false, Update 실행
         isDead = false;
 
