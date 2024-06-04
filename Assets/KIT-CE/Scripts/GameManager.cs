@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -113,7 +111,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
             Time.timeScale = 0;
 
             // Result UI
-            Debug.Log("게임 클리어");
 
             // 게임 클리어 후 재시작하고 죽어서 Retry하면 Clear! 가 나오게 됨
             // Restart Button UI
@@ -208,6 +205,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         // 스테이지 활성화
         stages[stageIndex].SetActive(true);
+        btnText.text = "Retry?";
         
         // 스테이지 하위 Item 활성화
         Item[] items = stages[stageIndex].GetComponentsInChildren<Item>(true);
