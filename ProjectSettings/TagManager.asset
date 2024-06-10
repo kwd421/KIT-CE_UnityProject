@@ -10,6 +10,7 @@ TagManager:
   - Crevasse
   - Coin
   - Trap
+  - Platform
   layers:
   - Default
   - TransparentFX
@@ -44,6 +45,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 2697060563
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
