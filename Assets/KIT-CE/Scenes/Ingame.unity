@@ -7445,7 +7445,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 6.75
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -21023,68 +21023,6 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!1001 &1186037128
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1957623289}
-    m_Modifications:
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 3.53
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -2.41
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1412210296289179060, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-      propertyPath: m_Name
-      value: JumpPad (2)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
---- !u!4 &1186037129 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 147888672046418910, guid: 28b50960138c5694d85694896ec9f7c8, type: 3}
-  m_PrefabInstance: {fileID: 1186037128}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1187715864
 GameObject:
   m_ObjectHideFlags: 0
@@ -34360,7 +34298,6 @@ Transform:
   - {fileID: 1718043590}
   - {fileID: 863548747}
   - {fileID: 1689642868}
-  - {fileID: 1186037129}
   - {fileID: 1100772666}
   - {fileID: 1676735771}
   - {fileID: 2108470888}
